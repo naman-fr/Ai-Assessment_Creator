@@ -113,7 +113,7 @@ Open `http://localhost:3000` in your browser.
 
 ## 🌐 Deployment
 
-- **Frontend**: Deployed on Vercel - [https://ai-assessment-creator.vercel.app](https://ai-assessment-creator.vercel.app)
+- **Frontend**: Deployed on Vercel - [https://ai-assessment-creator-sooty.vercel.app/](https://ai-assessment-creator-sooty.vercel.app/)
 - **Backend**: Deployed on Render - [https://ai-assessment-creator-u4dy.onrender.com](https://ai-assessment-creator-u4dy.onrender.com)
 
 ## 📝 License
