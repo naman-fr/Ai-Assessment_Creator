@@ -3,8 +3,12 @@ import { Server as HTTPServer } from "http";
 import { config } from "../config/env";
 
 export function setupWebSocket(httpServer: HTTPServer): SocketServer {
+  const origins = config.corsOrigin
+    ? config.corsOrigin.split(",").map((o) => o.trim())
+    : ["http://localhost:3000"];
+
   const io = new SocketServer(httpServer, {
-    cors: { origin: config.corsOrigin, methods: ["GET", "POST"] },
+    cors: { origin: origins, methods: ["GET", "POST"], credentials: true },
     transports: ["websocket", "polling"],
   });
 

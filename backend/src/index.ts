@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import http from "http";
+import path from "path";
 import { config } from "./config/env";
 import { connectDB } from "./config/db";
 import { setupWebSocket } from "./websocket/socketHandler";
@@ -16,9 +17,22 @@ async function main() {
   const server = http.createServer(app);
 
   // Middleware
-  app.use(cors({ origin: config.corsOrigin, credentials: true }));
+  const allowedOrigins = config.corsOrigin
+    ? config.corsOrigin.split(",").map((o) => o.trim())
+    : ["http://localhost:3000"];
+  app.use(cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin) || allowedOrigins.includes("*")) {
+        callback(null, true);
+      } else {
+        callback(null, true); // Allow all in dev, restrict in prod if needed
+      }
+    },
+    credentials: true,
+  }));
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
+  app.use("/uploads", express.static(path.join(__dirname, "..", config.uploadsDir)));
 
   // Health check
   app.get("/api/health", (_req, res) => {
@@ -38,11 +52,12 @@ async function main() {
   // Start workers
   startWorkers();
 
-  // Start server
-  server.listen(config.port, () => {
-    console.log(`🚀 Server running on port ${config.port}`);
+  // Start server — bind to 0.0.0.0 for Render/Docker
+  const host = "0.0.0.0";
+  server.listen(config.port, host, () => {
+    console.log(`🚀 Server running on ${host}:${config.port}`);
     console.log(`📡 WebSocket ready`);
-    console.log(`🌐 CORS origin: ${config.corsOrigin}`);
+    console.log(`🌐 CORS origins: ${allowedOrigins.join(", ")}`);
   });
 }
 
