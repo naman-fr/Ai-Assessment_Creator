@@ -1,15 +1,5 @@
 import mongoose from "mongoose";
-import dns from "dns";
 import { config } from "./env";
-
-// Use Google DNS for SRV resolution (needed for some environments like WSL)
-// Only override if the default DNS can't resolve Atlas SRV records
-const originalServers = dns.getServers();
-try {
-  dns.setServers(["8.8.8.8", "8.8.4.4", ...originalServers]);
-} catch {
-  // If setting fails, continue with default DNS
-}
 
 export async function connectDB(): Promise<void> {
   const maxRetries = 5;
